@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+    db:
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: mydb
+            MYSQL_USER: dev
+            MYSQL_PASSWORD: dev
+            TZ: 'Asia/Tokyo'
+        command: ["mysqld", "--character-set-server=utf8mb4" ,"--collation-server=utf8mb4_unicode_ci"]
+        volumes:
+            - ./docker/db/data:/var/lib/mysql
+            - ./docker/db/my.cnf:/etc/mysql/conf.d/my.cnf
+            - ./docker/db/sql:/docker-entrypoint-initdb.d
+
+    api:
+        image: hallog-api-dev
+        ports:
+            - 3000:3000
+        volumes:
+            - ./api/project:/project
+            - api-node_modules:/project/node_modules
+        command: ["npm", "run", "dev"]
+volumes:
+    api-node_modules:

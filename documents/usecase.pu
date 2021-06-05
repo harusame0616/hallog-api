@@ -1,0 +1,72 @@
+@startuml usecase
+:ブロガー: as blogger
+:ビジター: as visitor
+
+rectangle hallog {
+  package 認証 {
+    (サインインする) as signin
+    (サインアウトする) as signout
+  }
+
+  package ブロガー {
+    (登録する) as register
+    (退会する) as withdraw
+  }
+
+  package 記事 {
+    (記事を投稿する) as postArticle
+    (記事を更新する) as updateArticle
+    (記事を削除する) as deleteArticle
+    (記事を表示する) as showArticle
+    (記事リストを表示する) as showArticleList
+    (タグによって記事リストを表示する) as showArticleListWithTag
+    (ブロガーの投稿済みタグリストを表示する) as showTagList
+    (記事をいいねする) as likeArticle
+    (記事にコメントを投稿する) as postComment
+    (記事のコメントを削除する) as postComment
+  }
+}
+
+
+認証 -[hidden]- ブロガー
+ブロガー -[hidden]- 記事
+
+
+
+register -[hidden]- withdraw
+signin -[hidden]- signout
+postArticle -[hidden]- updateArticle
+updateArticle -[hidden]- deleteArticle
+deleteArticle -[hidden]- showArticle
+showArticle -[hidden]- showArticleList
+showArticleList -[hidden]- likeArticle
+likeArticle -[hidden]- postComment
+postComment -[hidden]- showArticleListWithTag
+showArticleListWithTag -[hidden]- showTagList
+
+
+blogger - register
+blogger - withdraw
+blogger - signin
+blogger - signout
+blogger - postArticle
+blogger - updateArticle
+blogger - deleteArticle
+blogger - showArticle
+blogger - showArticleList
+blogger - likeArticle
+blogger - postComment
+blogger - showArticleListWithTag
+blogger - showTagList
+
+showArticle - visitor
+likeArticle - visitor
+postComment - visitor
+showArticleListWithTag - visitor
+showTagList - visitor
+showArticleList - visitor
+
+
+
+
+@enduml

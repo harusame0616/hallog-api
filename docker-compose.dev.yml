@@ -2,18 +2,19 @@ version: '3.8'
 
 services:
     db:
-        environment:
-            MYSQL_ROOT_PASSWORD: root
-            MYSQL_DATABASE: mydb
-            MYSQL_USER: dev
-            MYSQL_PASSWORD: dev
-            TZ: 'Asia/Tokyo'
-        command: ["mysqld", "--character-set-server=utf8mb4" ,"--collation-server=utf8mb4_unicode_ci"]
+        ports:
+            - 3306:3306
         volumes:
-            - ./docker/db/data:/var/lib/mysql
-            - ./docker/db/my.cnf:/etc/mysql/conf.d/my.cnf
-            - ./docker/db/sql:/docker-entrypoint-initdb.d
-
+            - db-data:/var/lib/mysql
+            - ./db/my.cnf:/etc/mysql/conf.d/my.cnf
+            - ./db/sql:/docker-entrypoint-initdb.d
+        environment:
+            - MYSQL_ROOT_PASSWORD=${DB_ROOT}
+            - MYSQL_DATABASE=${DB_NAME}
+            - MYSQL_USER=${DB_USER}
+            - MYSQL_PASSWORD=${DB_PASSWORD}
+            - TZ=Asia/Tokyo
+        command: ["mysqld", "--character-set-server=utf8mb4" ,"--collation-server=utf8mb4_unicode_ci"]
     api:
         image: hallog-api-dev
         ports:
@@ -21,6 +22,11 @@ services:
         volumes:
             - ./api/project:/project
             - api-node_modules:/project/node_modules
-        command: ["npm", "run", "dev"]
+        environment:
+            - DB_NAME=${DB_NAME}
+            - DB_USER=${DB_USER}
+            - DB_PASSWORD=${DB_PASSWORD}
+
 volumes:
     api-node_modules:
+    db-data:

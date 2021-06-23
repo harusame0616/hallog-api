@@ -26,6 +26,9 @@ services:
             - DB_NAME=${DB_NAME}
             - DB_USER=${DB_USER}
             - DB_PASSWORD=${DB_PASSWORD}
+            - AUTH_SECRET=${AUTH_SECRET}
+            - AUTH_ALGORITHM=${AUTH_ALGORITHM}
+        restart: always
 
 volumes:
     api-node_modules:

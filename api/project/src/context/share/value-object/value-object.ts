@@ -1,5 +1,5 @@
+import Validator from 'validatorjs';
 import { CustomError } from '../../../error/custom-error';
-import Validator, { RegisterCallback } from 'validatorjs';
 Validator.useLang('ja');
 
 export class ValidationError extends CustomError {}

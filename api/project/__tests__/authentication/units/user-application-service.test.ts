@@ -80,7 +80,7 @@ describe('authenticate', () => {
       HashPassword.fromPlainPassword(new PlainPassword(password))
     )
   );
-  console.log(repository.users);
+
   test('can authenticate', async () => {
     const token = await uas.authenticate(email, password);
     expect(jwt.verify(token, secret)).toEqual({

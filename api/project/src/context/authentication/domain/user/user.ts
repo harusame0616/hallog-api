@@ -1,10 +1,11 @@
-import jwt from 'jsonwebtoken';
+import jwt, { SignOptions } from 'jsonwebtoken';
 import { Email } from './email';
 import { HashPassword } from './hash-password';
 import { PlainPassword } from './plain-password';
 import { UserId } from './user-id';
 
 export const secret = process.env.AUTH_SECRET || 'DEVELOPMENT_SECRET';
+export const algorithm = process.env.AUTH_ALGORITHM || 'HS256';
 
 export class User {
   public readonly id: UserId;
@@ -27,7 +28,8 @@ export class User {
         id: this.id.value,
         email: this.email.value,
       },
-      secret
+      secret,
+      { algorithm: process.env.AUTH_ALGORITHM } as SignOptions
     );
   }
 }

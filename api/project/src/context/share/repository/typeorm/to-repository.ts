@@ -4,7 +4,6 @@ import {
   getRepository,
   Repository,
 } from 'typeorm';
-
 import { CustomError } from '../../../../error/custom-error';
 
 class DomainModelConversionError extends CustomError {}
@@ -34,13 +33,13 @@ export abstract class TORepository<DB_ENTITY, DOMAIN_ENTITY> {
     this.repository.delete(object);
   }
 
-  save(domainEntity: DOMAIN_ENTITY) {
+  async save(domainEntity: DOMAIN_ENTITY) {
     const dbEntity = this.toDBEntity(domainEntity);
     if (!dbEntity) {
       throw new DomainModelConversionError(ErrorMessage.modelConversion);
     }
 
-    return this.repository.save(dbEntity);
+    this.repository.save(dbEntity);
   }
 
   async insert(domainEntity: DOMAIN_ENTITY) {

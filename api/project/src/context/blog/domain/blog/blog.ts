@@ -61,7 +61,9 @@ export class Blog {
     );
 
     if (validation.fails()) {
-      throw new ValidationError(validation.errors.first('title') || 'unknown');
+      throw new ValidationError(
+        validation.errors.first('description') || 'unknown'
+      );
     }
 
     this._description = description;

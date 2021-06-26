@@ -1,6 +1,6 @@
+import { ValidationError } from '../../../../error/validation-error';
 import {
-  ValidationError,
-  ValueObject,
+  ValueObject
 } from '../../../share/value-object/value-object';
 
 export class PrComment extends ValueObject<string> {

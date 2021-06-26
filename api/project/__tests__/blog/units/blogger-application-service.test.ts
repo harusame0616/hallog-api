@@ -1,36 +1,10 @@
 import { randomUUID } from 'crypto';
 import { BloggerApplicationService } from '../../../src/context/blog/application/blogger-application-service';
-import { Blogger } from '../../../src/context/blog/domain/blogger/blogger';
-import { BloggerId } from '../../../src/context/blog/domain/blogger/blogger-id';
-import { BloggerRepository } from '../../../src/context/blog/domain/blogger/blogger-repository';
+import { OMBloggerRepository } from '../../../src/context/blog/repositories/on-memory/om-blogger-repository';
 import { DuplicationError } from '../../../src/error/duplication-error';
 import { NotFoundError } from '../../../src/error/not-found-error';
 
-class TestBloggerRepository implements BloggerRepository {
-  bloggers: Blogger[] = [];
-
-  init() {
-    this.bloggers = [];
-  }
-
-  async findOneByBloggerId(bloggerId: BloggerId): Promise<Blogger | undefined> {
-    return this.bloggers.find((blogger) => blogger.bloggerId.equals(bloggerId));
-  }
-  async insert(blogger: Blogger): Promise<void> {
-    this.bloggers.push(blogger);
-  }
-  async save(newBlogger: Blogger): Promise<void> {
-    const index = this.bloggers.findIndex(
-      (blogger) => blogger.bloggerId === newBlogger.bloggerId
-    );
-    if (index < 0) {
-      this.bloggers.push(newBlogger);
-    } else {
-      this.bloggers[index] = newBlogger;
-    }
-  }
-}
-const bloggerRepository = new TestBloggerRepository();
+const bloggerRepository = new OMBloggerRepository();
 const uas = new BloggerApplicationService(bloggerRepository);
 
 describe('register', () => {

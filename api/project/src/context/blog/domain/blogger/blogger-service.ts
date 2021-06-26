@@ -1,5 +1,4 @@
 import { DuplicationError } from '../../../../error/duplication-error';
-import { TOBloggerRepository } from '../../repositories/typeorm/to-blogger-repository';
 import { Blogger } from './blogger';
 import { BloggerRepository } from './blogger-repository';
 

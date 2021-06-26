@@ -1,6 +1,6 @@
 import express, { NextFunction, Request, Response } from 'express';
 import { DuplicationError } from '../../../error/duplication-error';
-import { ValidationError } from '../../share/value-object/value-object';
+import { ValidationError } from '../../../error/validation-error';
 import { UserApplicationService } from '../application/user-application-service';
 import { TOUserRepository } from '../infrastructure/typeorm/to-user-repository';
 

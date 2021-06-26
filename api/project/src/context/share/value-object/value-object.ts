@@ -1,8 +1,6 @@
 import Validator from 'validatorjs';
-import { CustomError } from '../../../error/custom-error';
+import { ValidationError } from '../../../error/validation-error';
 Validator.useLang('ja');
-
-export class ValidationError extends CustomError {}
 
 export abstract class ValueObject<TYPE> {
   public readonly value: TYPE;

@@ -2,10 +2,9 @@ import express from 'express';
 import boom from 'express-boom';
 import expressJWT from 'express-jwt';
 import { router as authenticationUserRouter } from './context/authentication/port/user';
+import { router as blogBlogRouter } from './context/blog/port/blog';
 import { router as blogBloggerRouter } from './context/blog/port/blogger';
 import { TORepository } from './context/share/repository/typeorm/to-repository';
-import { CustomError } from './error/custom-error';
-class EnvironmentVariableUndefinedError extends CustomError {}
 
 
 const app: express.Express = express();
@@ -35,6 +34,7 @@ const main = async () =>  {
 
   app.use('/authentications/users', authenticationUserRouter);
   app.use('/blog/bloggers', blogBloggerRouter);
+  app.use('/blog/blogs', blogBlogRouter);
 
   for (let retryCount = 0; retryCount < 5; retryCount++)   {
     try {

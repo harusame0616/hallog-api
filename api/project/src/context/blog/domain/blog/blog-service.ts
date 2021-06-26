@@ -32,7 +32,7 @@ export class BlogService {
     }
 
     const blogs = await this.blogRepository.findByOwner(owner);
-    if (blogs.length > BlogService.blogMaxNum) {
+    if (blogs.length >= BlogService.blogMaxNum) {
       throw new OverflowError(ErrorMessage.overflowMaxBlogCount);
     }
   }

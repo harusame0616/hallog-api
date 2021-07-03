@@ -11,6 +11,7 @@ const ErrorMessage = {
   articleExists: '作成済みの記事です',
   bloggerDoesntExist: 'ブロガーが存在しません',
   blogDoesntExist: 'ブログが存在しません',
+  articleIsHidden: '非公開の記事です',
 };
 
 export class ArticleService {
@@ -49,6 +50,11 @@ export class ArticleService {
 
     if (!blog.ownerOf(posterId)) {
       throw new PermissionError(posterId);
+    }
+  }
+  async canRead(article: Article) {
+    if (!article.isPublic) {
+      throw new PermissionError(ErrorMessage.articleIsHidden);
     }
   }
 }

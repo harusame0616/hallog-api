@@ -1,10 +1,16 @@
+import { NotFoundError } from '../../../error/not-found-error';
 import { Article } from '../domain/article/article';
+import { ArticleId } from '../domain/article/article-id';
 import { ArticleRepository } from '../domain/article/article-repository';
 import { ArticleService } from '../domain/article/article-service';
 import { BlogId } from '../domain/blog/blog-id';
 import { BlogRepository } from '../domain/blog/blog-repository';
 import { BloggerId } from '../domain/blogger/blogger-id';
 import { BloggerRepository } from '../domain/blogger/blogger-repository';
+
+const ErrorMessage = {
+  articleIsNotFound : '記事が見つかりません'
+}
 
 export class ArticleApplicationService {
   private _articleService;
@@ -45,5 +51,24 @@ export class ArticleApplicationService {
 
     await this._articleService.canPost(new BloggerId(posterId), article);
     await this._articleRepository.insert(article);
+  }
+
+  async read(articleId: string) {
+    const article = await this._articleRepository.findOneById(
+      new ArticleId(articleId)
+    );
+
+    if (!article) {
+      throw new NotFoundError(ErrorMessage.articleIsNotFound);
+    }
+
+    await this._articleService.canRead(article);
+    return {
+      title: article.title,
+      content: article.content,
+      tags: article.tags,
+      createdAt: article.createdAt,
+      updatedAt: article.updateAt,
+    }
   }
 }

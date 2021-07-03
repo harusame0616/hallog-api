@@ -57,3 +57,19 @@ router.post(
     return res.status(201).send();
   }
 );
+
+router.get(
+  '/:articleId',
+  async (req: express.Request, res: express.Response) => {
+    const { articleId } = req.params;
+
+    let article;
+    try {
+      article = await articleApplicationService.read(articleId);
+    } catch (err) {
+      return res.boom.badGateway(err);
+    }
+
+    return res.status(200).send(article);
+  }
+);

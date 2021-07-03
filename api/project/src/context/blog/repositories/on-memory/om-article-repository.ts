@@ -5,6 +5,9 @@ import { ArticleRepository } from '../../domain/article/article-repository';
 export class OMArticleRepository implements ArticleRepository {
   articles: Article[] = [];
 
+  init() {
+    this.articles = [];
+  }
   async insert(article: Article): Promise<void> {
     this.articles.push(article);
   }

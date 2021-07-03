@@ -1,5 +1,7 @@
 import { randomUUID } from 'crypto';
 import { ArticleApplicationService } from '../../../src/context/blog/application/article-application-service';
+import { Article } from '../../../src/context/blog/domain/article/article';
+import { ArticleId } from '../../../src/context/blog/domain/article/article-id';
 import { Blog } from '../../../src/context/blog/domain/blog/blog';
 import { BlogId } from '../../../src/context/blog/domain/blog/blog-id';
 import { Blogger } from '../../../src/context/blog/domain/blogger/blogger';
@@ -31,12 +33,7 @@ const blogId = 'test-blog';
 const blogName = "test user's test blog !!";
 const blogDescription = 'this blog is for testing';
 
-describe('post', () => {
-  const title = 'test article';
-  const content = 'this is article for testing.';
-  const tags = ['test', 'blog', 'article'];
-
-  beforeAll(async () => {
+beforeAll(async () => {
     await bloggerRepository.insert(
       new Blogger(
         new BloggerId(bloggerId),
@@ -44,6 +41,7 @@ describe('post', () => {
         new PrComment(prComment)
       )
     );
+
     await bloggerRepository.insert(
       new Blogger(
         new BloggerId(bloggerId2),
@@ -52,15 +50,26 @@ describe('post', () => {
       )
     );
 
-    const blog = new Blog(
-      new BlogId(blogId),
-      blogName,
-      blogDescription,
-      new BloggerId(bloggerId)
+    await blogRepository.insert(
+      new Blog(
+        new BlogId(blogId),
+        blogName,
+        blogDescription,
+        new BloggerId(bloggerId)
+      )
     );
-    await blogRepository.insert(blog);
-  });
-  test('can test', async () => {
+})
+
+describe('post', () => {
+  const title = 'test article';
+  const content = 'this is article for testing.';
+  const tags = ['test', 'blog', 'article'];
+
+  beforeEach(() => {
+    articleRepository.init();
+   })
+
+  test('can post', async () => {
     await app.post(bloggerId, blogId, title, content, tags, true);
 
     expect(articleRepository.articles.length).toBe(1);
@@ -86,5 +95,65 @@ describe('post', () => {
   test("throws error if blogger doesn't exists", async () => {
     const promise = app.post(randomUUID(), blogId, title, content, tags, true);
     await expect(promise).rejects.toThrowError(NotFoundError);
+  });
+});
+
+describe('read', () => {
+  const articleId = randomUUID();
+  const articleId2 = randomUUID();
+  const title = 'test article';
+  const content = 'this is article for testing.';
+  const tags = ['test', 'blog', 'article'];
+
+  beforeAll(async () => {
+    articleRepository.init();
+
+    await articleRepository.insert(
+      new Article(
+        new ArticleId(articleId),
+        new BlogId(blogId),
+        title,
+        content,
+        tags,
+        true,
+        new Date(),
+        new Date()
+      )
+    );
+
+    await articleRepository.insert(
+      new Article(
+        new ArticleId(articleId2),
+        new BlogId(blogId),
+        title,
+        content,
+        tags,
+        false,
+        new Date(),
+        new Date()
+      )
+    );
+  });
+
+  test('can read', async () => {
+    const article = await app.read(articleId);
+
+    expect(article).toEqual({
+      title: title,
+      content: content,
+      tags: expect.arrayContaining(tags),
+      createdAt: expect.anything(),
+      updatedAt: expect.anything(),
+    });
+  });
+
+  test("throws error if article dosn't exists", async () => {
+    const promise = app.read(randomUUID());
+    await expect(promise).rejects.toThrowError(NotFoundError);
+  });
+
+  test('throws error if article is hidden', async () => {
+    const promise = app.read(articleId2);
+    await expect(promise).rejects.toThrowError(PermissionError);
   });
 });

@@ -15,11 +15,7 @@ export class TOUserRepository
     return UserEntity;
   }
 
-  toDomainEntity(entity?: UserEntity) {
-    if (!entity) {
-      return undefined;
-    }
-
+  async toDomainEntity(entity: UserEntity) {
     return new User(
       new UserId(entity.userId),
       new Email(entity.email),
@@ -27,11 +23,7 @@ export class TOUserRepository
     );
   }
 
-  toDBEntity(entity?: User) {
-    if (!entity) {
-      return undefined;
-    }
-
+  async toDBEntity(entity: User) {
     return new UserEntity(
       entity.id.value,
       entity.email.value,

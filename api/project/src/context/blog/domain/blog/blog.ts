@@ -68,4 +68,8 @@ export class Blog {
 
     this._description = description;
   }
+
+  ownerOf(bloggerId: BloggerId) {
+    return this.ownerId.equals(bloggerId);
+  }
 }

@@ -2,7 +2,7 @@ import {
   createConnection,
   EntityTarget,
   getRepository,
-  Repository,
+  Repository
 } from 'typeorm';
 import { CustomError } from '../../../../error/custom-error';
 
@@ -11,6 +11,7 @@ const ErrorMessage = { modelConversion: 'モデルの変換に失敗しました
 
 export abstract class TORepository<DB_ENTITY, DOMAIN_ENTITY> {
   private readonly repository: Repository<DB_ENTITY>;
+  protected defaultFindOption = {};
 
   static connect() {
     return createConnection();
@@ -21,14 +22,17 @@ export abstract class TORepository<DB_ENTITY, DOMAIN_ENTITY> {
   }
 
   async findOne(object: object) {
-    return this.toDomainEntity(await this.repository.findOne(object));
+    const entity = await this.repository.findOne(object, this.defaultFindOption);;
+    if (!entity) {
+      return undefined;;
+    }
+
+    return this.toDomainEntity(entity);
   }
 
   async find(object: object): Promise<DOMAIN_ENTITY[]> {
-    const entities = await this.repository.find(object);
-    return entities
-      .map((entity) => this.toDomainEntity(entity))
-      .filter((entity) => entity) as DOMAIN_ENTITY[];
+    const entities = await this.repository.find({ ...this.defaultFindOption, ...object });
+    return Promise.all(entities.map((entity) => this.toDomainEntity(entity)));
   }
 
   async delete(object: object) {
@@ -36,25 +40,28 @@ export abstract class TORepository<DB_ENTITY, DOMAIN_ENTITY> {
   }
 
   async save(domainEntity: DOMAIN_ENTITY) {
-    const dbEntity = this.toDBEntity(domainEntity);
+    const dbEntity = await this.toDBEntity(domainEntity);
     if (!dbEntity) {
       throw new DomainModelConversionError(ErrorMessage.modelConversion);
     }
 
-    this.repository.save(dbEntity);
+    await this.repository.save(dbEntity);
+    await this.afterSave(domainEntity);
   }
 
   async insert(domainEntity: DOMAIN_ENTITY) {
-    const dbEntity = this.toDBEntity(domainEntity);
+    const dbEntity = await this.toDBEntity(domainEntity);
 
     if (!dbEntity) {
       throw new DomainModelConversionError(ErrorMessage.modelConversion);
     }
 
-    this.repository.insert(dbEntity);
+    await this.repository.insert(dbEntity);
+    await this.afterSave(domainEntity);
   }
+  async afterSave(entity: DOMAIN_ENTITY) { }
 
   abstract entityTarget(): EntityTarget<DB_ENTITY>;
-  abstract toDomainEntity(entity?: DB_ENTITY): DOMAIN_ENTITY | undefined;
-  abstract toDBEntity(entity?: DOMAIN_ENTITY): DB_ENTITY | undefined;
+  abstract toDomainEntity(entity: DB_ENTITY): Promise<DOMAIN_ENTITY>;
+  abstract toDBEntity(entity: DOMAIN_ENTITY): Promise<DB_ENTITY>;
 }

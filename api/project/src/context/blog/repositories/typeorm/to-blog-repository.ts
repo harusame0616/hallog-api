@@ -23,11 +23,7 @@ export class TOBlogRepository
     return BlogEntity;
   }
 
-  toDomainEntity(entity?: BlogEntity) {
-    if (!entity) {
-      return undefined;
-    }
-
+  async toDomainEntity(entity: BlogEntity) {
     return new Blog(
       new BlogId(entity.id),
       entity.title,
@@ -36,11 +32,7 @@ export class TOBlogRepository
     );
   }
 
-  toDBEntity(entity?: Blog) {
-    if (!entity) {
-      return undefined;
-    }
-
+  async toDBEntity(entity: Blog) {
     return new BlogEntity(
       entity.id.value,
       entity.title,

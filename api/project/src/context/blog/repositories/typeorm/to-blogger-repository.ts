@@ -15,11 +15,7 @@ export class TOBloggerRepository
     return BloggerEntity;
   }
 
-  toDomainEntity(entity?: BloggerEntity) {
-    if (!entity) {
-      return undefined;
-    }
-
+  async toDomainEntity(entity: BloggerEntity) {
     return new Blogger(
       new BloggerId(entity.bloggerId),
       new Nickname(entity.nickname),
@@ -27,11 +23,7 @@ export class TOBloggerRepository
     );
   }
 
-  toDBEntity(entity?: Blogger) {
-    if (!entity) {
-      return undefined;
-    }
-
+  async toDBEntity(entity: Blogger) {
     return new BloggerEntity(
       entity.bloggerId.value,
       entity.nickname.value,

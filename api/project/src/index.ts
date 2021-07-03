@@ -1,7 +1,9 @@
 import express from 'express';
 import boom from 'express-boom';
 import expressJWT from 'express-jwt';
+import 'reflect-metadata';
 import { router as authenticationUserRouter } from './context/authentication/port/user';
+import { router as blogArticleRouter } from './context/blog/port/article';
 import { router as blogBlogRouter } from './context/blog/port/blog';
 import { router as blogBloggerRouter } from './context/blog/port/blogger';
 import { TORepository } from './context/share/repository/typeorm/to-repository';
@@ -35,6 +37,7 @@ const main = async () =>  {
   app.use('/authentications/users', authenticationUserRouter);
   app.use('/blog/bloggers', blogBloggerRouter);
   app.use('/blog/blogs', blogBlogRouter);
+  app.use('/blog/articles', blogArticleRouter);
 
   for (let retryCount = 0; retryCount < 5; retryCount++)   {
     try {

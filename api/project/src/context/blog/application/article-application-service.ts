@@ -1,4 +1,5 @@
 import { NotFoundError } from '../../../error/not-found-error';
+import { Pagination } from '../../../helper/pagination';
 import { Article } from '../domain/article/article';
 import { ArticleId } from '../domain/article/article-id';
 import { ArticleRepository } from '../domain/article/article-repository';
@@ -7,21 +8,24 @@ import { BlogId } from '../domain/blog/blog-id';
 import { BlogRepository } from '../domain/blog/blog-repository';
 import { BloggerId } from '../domain/blogger/blogger-id';
 import { BloggerRepository } from '../domain/blogger/blogger-repository';
+import { ArticleQueryService } from './article-query-service';
 
 const ErrorMessage = {
-  articleIsNotFound : '記事が見つかりません'
-}
+  articleIsNotFound: '記事が見つかりません',
+};
 
 export class ArticleApplicationService {
   private _articleService;
   private _blogRepository;
   private _bloggerRepository;
   private _articleRepository;
+  private _articleQueryService;
 
   constructor(
     blogRepository: BlogRepository,
     bloggerRepository: BloggerRepository,
-    articleRepository: ArticleRepository
+    articleRepository: ArticleRepository,
+    articleQueryService: ArticleQueryService
   ) {
     this._blogRepository = blogRepository;
     this._bloggerRepository = bloggerRepository;
@@ -31,6 +35,7 @@ export class ArticleApplicationService {
       bloggerRepository,
       articleRepository
     );
+    this._articleQueryService = articleQueryService;
   }
 
   async post(
@@ -69,6 +74,12 @@ export class ArticleApplicationService {
       tags: article.tags,
       createdAt: article.createdAt,
       updatedAt: article.updateAt,
-    }
+    };
+  }
+
+  getNewArticles(blogId: string, size: number, index: number) {
+    const pagination = new Pagination(size, index);
+    const id = new BlogId(blogId);
+    return this._articleQueryService.getNewArticles(id, pagination);
   }
 }

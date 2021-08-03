@@ -24,6 +24,9 @@ export class ArticleEntity {
   @Column()
   updateAt: Date;
 
+  @Column('timestamp', { nullable: true })
+  publishedAt?: Date;
+
   @OneToMany((type) => TagEntity, (tag) => tag.article)
   tags!: TagEntity[];
 
@@ -34,7 +37,8 @@ export class ArticleEntity {
     content: string,
     isPublic: boolean,
     createdAt: Date,
-    updateAt: Date
+    updateAt: Date,
+    publishedAt?: Date
   ) {
     this.id = id;
     this.blogId = blogId;
@@ -43,5 +47,6 @@ export class ArticleEntity {
     this.isPublic = isPublic;
     this.createdAt = createdAt;
     this.updateAt = updateAt;
+    this.publishedAt = publishedAt;
   }
 }

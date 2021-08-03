@@ -21,6 +21,7 @@ export class Article {
   protected _isPublic!: boolean;
   protected _createdAt: Date;
   protected _updateAt: Date;
+  protected _publishedAt?: Date;
   readonly maxTagConut = 10;
 
   constructor(
@@ -31,7 +32,8 @@ export class Article {
     tags: string[],
     isPublic: boolean,
     createdAt: Date,
-    updateAt: Date
+    updateAt: Date,
+    publishedAt?: Date,
   ) {
     this._id = id;
     this._blogId = blogId;
@@ -58,6 +60,7 @@ export class Article {
 
     this._createdAt = createdAt;
     this._updateAt = updateAt;
+    this._publishedAt = publishedAt;
   }
 
   static createNewArticle(
@@ -142,6 +145,7 @@ export class Article {
 
   publish() {
     this._isPublic = true;
+    this._publishedAt = this._publishedAt || getCurrentDatetime()
   }
 
   hide() {

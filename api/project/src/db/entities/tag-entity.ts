@@ -1,4 +1,4 @@
-import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import { ArticleEntity } from './article-entity';
 
 @Entity()
@@ -6,14 +6,17 @@ export class TagEntity {
   @PrimaryColumn()
   name: string;
 
+  @Column()
+  readonly articleId: string;
   @ManyToOne((type) => ArticleEntity, (article) => article.tags, {
     primary: true,
   })
   @JoinColumn({ name: 'articleId' })
-  article: ArticleEntity;
+  article?: ArticleEntity;
 
-  constructor(name: string, article: ArticleEntity) {
+  constructor(name: string, articleId: string, articleEntity?: ArticleEntity) {
     this.name = name;
-    this.article = article;
+    this.articleId = articleId;
+    this.article = articleEntity;
   }
 }

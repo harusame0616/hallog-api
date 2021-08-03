@@ -50,7 +50,7 @@ export class TOArticleRepository
     const articleEntity = await this.toDBEntity(entity);
 
     await tagRepository.save(
-      entity.tags.map((tag) => new TagEntity(tag, articleEntity))
+      entity.tags.map((tag) => new TagEntity(tag, articleEntity.id))
     );
   }
 }
